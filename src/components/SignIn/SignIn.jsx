@@ -1,19 +1,34 @@
-import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
-import { FaGoogle } from "react-icons/fa6";
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
 import { useState } from "react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 const SignIn = () => {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
 
-  const provider = new GoogleAuthProvider();
+  const googleProvider = new GoogleAuthProvider();
+  const githubProvider = new GithubAuthProvider();
 
   const handleGoogleSignIn = () => {
     // Handle Google sign-in logic here
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        console.log(result.user);
+        setUser(result.user);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setUser(null);
+      });
+  };
+
+  const handleGithubSignIn = () => {
+    // Handle Github sign-in logic here
+    signInWithPopup(auth, githubProvider)
       .then((result) => {
         console.log(result.user);
         setUser(result.user);
@@ -104,7 +119,15 @@ const SignIn = () => {
               class="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
               Sign in with google
-              <FaGoogle className="inline ml-4" />
+              <FcGoogle  className="inline ml-4" />
+            </button>
+            <button
+              onClick={handleGithubSignIn}
+              type="button"
+              class="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
+            >
+              Sign in with github
+              <FaGithub  className="inline ml-4" />
             </button>
           </div>
           <p class="px-6 text-sm text-center dark:text-gray-600">
