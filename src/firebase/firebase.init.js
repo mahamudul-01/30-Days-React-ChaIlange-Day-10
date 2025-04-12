@@ -3,6 +3,8 @@ import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
+import { getAuth } from "firebase/auth";
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyC4pwu7MWisaySKTW5uf-rvij63-sYX-Lg",
@@ -13,6 +15,12 @@ const firebaseConfig = {
   appId: "1:333309908113:web:4306f6618e453245449b30"
 };
 
+
+
+
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export default app;
+
+const auth = getAuth(app);
+export default auth;

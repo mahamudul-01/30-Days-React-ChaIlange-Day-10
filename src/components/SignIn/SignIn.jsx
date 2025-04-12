@@ -1,7 +1,22 @@
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import auth from "../../firebase/firebase.init";
 
 const SignIn = () => {
+
+    const provider=new GoogleAuthProvider();
+
+    const handleGoogleSignIn = () => {
+        // Handle Google sign-in logic here
+        signInWithPopup(auth, provider)
+        .then((result)=>{
+            console.log(result.user);
+        })
+        .catch((error)=>{
+            console.log(error.message);
+        })
+    }
   return (
     <div class="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-gray-50 dark:text-gray-800 mx-auto">
       <div class="mb-8 text-center">
@@ -53,6 +68,7 @@ const SignIn = () => {
               Sign in
             </button>
             <button
+            onClick={handleGoogleSignIn}
               type="button"
               class="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
