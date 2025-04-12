@@ -1,26 +1,48 @@
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa6";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
+import { useState } from "react";
 
 const SignIn = () => {
+  const navigate = useNavigate();
 
-    const provider=new GoogleAuthProvider();
+  const [user, setUser] = useState(null);
 
-    const handleGoogleSignIn = () => {
-        // Handle Google sign-in logic here
-        signInWithPopup(auth, provider)
-        .then((result)=>{
-            console.log(result.user);
-        })
-        .catch((error)=>{
-            console.log(error.message);
-        })
-    }
+  const provider = new GoogleAuthProvider();
+
+  const handleGoogleSignIn = () => {
+    // Handle Google sign-in logic here
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result.user);
+        setUser(result.user);
+      })
+      .catch((error) => {
+        console.log(error.message);
+        setUser(null);
+      });
+  };
+
+  const handleSignOut = () => {
+    signOut(auth)
+      .then(() => {
+        console.log("sign out successfully");
+        setUser(null);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
   return (
     <div class="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-gray-50 dark:text-gray-800 mx-auto">
       <div class="mb-8 text-center">
-        <h1 class="my-3 text-4xl font-bold">Sign in</h1>
+        <div className="flex justify-center items-center">
+          <h1 class="my-3  text-4xl font-bold">Sign in</h1>
+          {user && (
+            <img className="rounded-full w-20" src={user?.photoURL} alt="" />
+          )}
+        </div>
         <p class="text-sm dark:text-gray-600">Sign in to access your account</p>
       </div>
       <form noValidate="" action="" class="space-y-12">
@@ -67,8 +89,17 @@ const SignIn = () => {
             >
               Sign in
             </button>
+            {user && (
+              <button
+                onClick={handleSignOut}
+                type="button"
+                class="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
+              >
+                Sign out
+              </button>
+            )}
             <button
-            onClick={handleGoogleSignIn}
+              onClick={handleGoogleSignIn}
               type="button"
               class="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
