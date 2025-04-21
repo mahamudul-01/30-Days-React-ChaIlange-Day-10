@@ -20,6 +20,15 @@ const SignUp = () => {
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
+    const termsAccepted = e.target.terms.checked;
+
+    if (!termsAccepted) {
+      setEmailUserError('You must accept the Terms and Conditions');
+      toast.error('You must accept the Terms and Conditions', {
+        position: "top-center",
+      });
+      return;
+    }
 
     if(password.length < 6) {
       setEmailUserError('Password must be at least 6 characters long'); 
@@ -126,6 +135,18 @@ const SignUp = () => {
               >
                 {showPassword ? <VscEyeClosed /> :<VscEye /> }
               </button>
+            </div>
+            {/* Terms and Conditions Checkbox */}
+            <div className="flex items-center mt-4">
+              <input
+                type="checkbox"
+                id="terms"
+                name="terms"
+                className="mr-2"
+              />
+              <label htmlFor="terms" className="text-sm">
+                I accept the <a href="#" className="underline">Terms and Conditions</a>
+              </label>
             </div>
           </div>
         </div>

@@ -1,16 +1,17 @@
-import {  GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
 import { useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 const SignIn = () => {
-
-
   const navigate = useNavigate();
-
   const [user, setUser] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
@@ -20,32 +21,38 @@ const SignIn = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    
-
-  }
-
-  const handleGoogleSignIn = () => {
-    // Handle Google sign-in logic here
-    signInWithPopup(auth, googleProvider)
+    signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
-        console.log(result.user);
         setUser(result.user);
+        toast.success("Sign in successful!", { position: "top-center" });
+        // navigate("/dashboard"); // চাইলে redirect করতে পারো
       })
       .catch((error) => {
-        console.log(error.message);
+        toast.error(error.message, { position: "top-center" });
+        setUser(null);
+      });
+  };
+
+  const handleGoogleSignIn = () => {
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        setUser(result.user);
+        toast.success("Google sign in successful!", { position: "top-center" });
+      })
+      .catch((error) => {
+        toast.error(error.message, { position: "top-center" });
         setUser(null);
       });
   };
 
   const handleGithubSignIn = () => {
-    // Handle Github sign-in logic here
     signInWithPopup(auth, githubProvider)
       .then((result) => {
-        console.log(result.user);
         setUser(result.user);
+        toast.success("Github sign in successful!", { position: "top-center" });
       })
       .catch((error) => {
-        console.log(error.message);
+        toast.error(error.message, { position: "top-center" });
         setUser(null);
       });
   };
@@ -53,20 +60,22 @@ const SignIn = () => {
   const handleSignOut = () => {
     signOut(auth)
       .then(() => {
-        console.log("sign out successfully");
+        toast.success("Sign out successful!", { position: "top-center" });
         setUser(null);
       })
       .catch((error) => {
-        console.log(error.message);
+        toast.error(error.message, { position: "top-center" });
       });
   };
+
   return (
     <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-gray-50 dark:text-gray-800 mx-auto">
+      <ToastContainer />
       <div className="mb-8 text-center">
-        <div classNameName="flex justify-center items-center">
+        <div className="flex justify-center items-center">
           <h1 className="my-3  text-4xl font-bold">Sign in</h1>
           {user && (
-            <img classNameName="rounded-full w-20" src={user?.photoURL} alt="" />
+            <img className="rounded-full w-20" src={user?.photoURL} alt="" />
           )}
         </div>
         <p className="text-sm dark:text-gray-600">Sign in to access your account</p>
@@ -98,13 +107,23 @@ const SignIn = () => {
                 Forgot password?
               </a>
             </div>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="*****"
-              className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                id="password"
+                placeholder="*****"
+                className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-base text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <VscEyeClosed /> : <VscEye />}
+              </button>
+            </div>
           </div>
         </div>
         <div className="space-y-2">
@@ -130,7 +149,7 @@ const SignIn = () => {
               className="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
               Sign in with google
-              <FcGoogle  classNameName="inline ml-4" />
+              <FcGoogle className="inline ml-4" />
             </button>
             <button
               onClick={handleGithubSignIn}
@@ -138,7 +157,7 @@ const SignIn = () => {
               className="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
               Sign in with github
-              <FaGithub  classNameName="inline ml-4" />
+              <FaGithub className="inline ml-4" />
             </button>
           </div>
           <p className="px-6 text-sm text-center dark:text-gray-600">
