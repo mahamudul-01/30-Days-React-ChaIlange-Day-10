@@ -1,21 +1,60 @@
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import auth from "../../firebase/firebase.init";
+import { useState } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+
 const SignUp = () => {
+
+  const [emailUserError, setEmailUserError] = useState(null);
+
+
   const handleEmailSignUp = (e) => {
+
+
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(name, email, password);
-  }
+
+    createUserWithEmailAndPassword(auth, email, password)
+          .then((userCredential) => {
+            // Signed up
+            const user = userCredential.user;
+            console.log(user);
+            // ...
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setEmailUserError(errorMessage);
+            toast.success(`${emailUserError}`, {
+              position: "top-center",
+              
+              });
+            // ..
+          });
+        console.log(name, email, password);
+
+    
+    
+  };
 
   return (
     <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-gray-50 dark:text-gray-800 mx-auto">
       <div className="mb-8 text-center">
         <h1 className="my-3 text-4xl font-bold">Sign Up</h1>
-        <p className="text-sm dark:text-gray-600">Sign up to access your account</p>
+        <p className="text-sm dark:text-gray-600">
+          Sign up to access your account
+        </p>
       </div>
-      <form noValidate="" onSubmit={handleEmailSignUp} action="" className="space-y-12">
+      <form
+        noValidate=""
+        onSubmit={handleEmailSignUp}
+        action=""
+        className="space-y-12"
+      >
         <div className="space-y-4">
           <div>
             <label htmlFor="email" className="block mb-2 text-sm">
@@ -29,6 +68,7 @@ const SignUp = () => {
               className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
             />
           </div>
+          <ToastContainer />
           <div>
             <label htmlFor="email" className="block mb-2 text-sm">
               Email address
