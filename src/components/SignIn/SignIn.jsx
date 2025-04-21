@@ -1,7 +1,7 @@
-import { signInWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { signInWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
@@ -12,6 +12,8 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+
+  const emailRef = useRef('');
 
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
@@ -24,8 +26,20 @@ const SignIn = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then((result) => {
         setUser(result.user);
-        toast.success("Sign in successful!", { position: "top-center" });
-        // navigate("/dashboard"); // চাইলে redirect করতে পারো
+        if (result.user.emailVerified) {
+          toast.success("Sign in successful!", { position: "top-center" });
+          navigate('/');
+          console.log("Sign in successful!", result.user);
+        } else {
+          toast.error("Please verify your email address", { position: "top-center" });
+          signOut(auth)
+            .then(() => {
+              toast.success("Sign out successful!", { position: "top-center" });
+            })
+            .catch((error) => {
+              toast.error(error.message, { position: "top-center" });
+            });
+        }
       })
       .catch((error) => {
         toast.error(error.message, { position: "top-center" });
@@ -68,6 +82,28 @@ const SignIn = () => {
       });
   };
 
+  const handleForgetPassword = () => {
+    const email = emailRef.current.value;
+    if (!email) {
+      toast.error("Please enter your email address", { position: "top-center" });
+      return;
+    }
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address", { position: "top-center" });
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        toast.success("Password reset email sent!", { position: "top-center" });
+      })
+      .catch((error) => {
+        toast.error(error.message, { position: "top-center" });
+      });
+  }
+
+  
+
   return (
     <div className="flex flex-col max-w-md p-6 rounded-md sm:p-10 dark:bg-gray-50 dark:text-gray-800 mx-auto">
       <ToastContainer />
@@ -88,6 +124,7 @@ const SignIn = () => {
             </label>
             <input
               type="email"
+              ref={emailRef}
               name="email"
               id="email"
               placeholder="leroy@jenkins.com"
@@ -95,7 +132,7 @@ const SignIn = () => {
             />
           </div>
           <div>
-            <div className="flex justify-between mb-2">
+            <div onClick={handleForgetPassword} className="flex justify-between mb-2">
               <label htmlFor="password" className="text-sm">
                 Password
               </label>

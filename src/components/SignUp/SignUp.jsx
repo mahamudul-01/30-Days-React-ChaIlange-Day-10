@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
@@ -49,6 +49,28 @@ const SignUp = () => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
+        updateProfile(user, {
+          displayName: name,
+        })
+          .then(() => {
+            // Profile updated successfully
+            console.log("Profile updated successfully");
+          })
+          .catch((error) => { 
+            // An error occurred while updating the profile
+            console.error("Error updating profile:", error);
+          });
+        sendEmailVerification(user)
+          .then(() => {
+            // Email verification sent. Prompt user to check their email.
+            toast.info('Verification email sent. Please check your inbox.', {
+              position: "top-center",
+            });
+          }
+        )
+
+
+        
         setSuccess('User created successfully');
         toast.success('User created successfully', {
           position: "top-center",
