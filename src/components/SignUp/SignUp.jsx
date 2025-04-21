@@ -3,42 +3,58 @@ import { FaGoogle } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
 import { useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { VscEye, VscEyeClosed } from "react-icons/vsc";
 
 const SignUp = () => {
 
-  const [emailUserError, setEmailUserError] = useState(null);
-
+  const [emailUserError, setEmailUserError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleEmailSignUp = (e) => {
-
-
+    setEmailUserError('');
+    setSuccess('');
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    createUserWithEmailAndPassword(auth, email, password)
-          .then((userCredential) => {
-            // Signed up
-            const user = userCredential.user;
-            console.log(user);
-            // ...
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            setEmailUserError(errorMessage);
-            toast.success(`${emailUserError}`, {
-              position: "top-center",
-              
-              });
-            // ..
-          });
-        console.log(name, email, password);
+    if(password.length < 6) {
+      setEmailUserError('Password must be at least 6 characters long'); 
+      toast.error('Password must be at least 6 characters long', {
+        position: "top-center",
+      });
+      return; 
+    }
+    else if(!/(?=.*[A-Z])/.test(password)) {
+      setEmailUserError('Password must contain at least one uppercase letter'); 
+      toast.error('Password must contain at least one uppercase letter', {
+        position: "top-center",
+      });
+      return; 
+    }
+    
 
-    
-    
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        setSuccess('User created successfully');
+        toast.success('User created successfully', {
+          position: "top-center",
+          autoClose: 5000,
+        });
+        console.log(user);
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        setEmailUserError(errorMessage);
+        toast.error(errorMessage, {
+          position: "top-center",
+        });
+      });
+    console.log(name, email, password);
   };
 
   return (
@@ -94,13 +110,23 @@ const SignUp = () => {
                 Forgot password?
               </a>
             </div>
-            <input
-              type="password"
-              name="password"
-              id="password"
-              placeholder="*****"
-              className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                id="password"
+                placeholder="*****"
+                className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-base text-gray-600"
+                tabIndex={-1}
+              >
+                {showPassword ? <VscEyeClosed /> :<VscEye /> }
+              </button>
+            </div>
           </div>
         </div>
         <div className="space-y-2">
@@ -122,7 +148,6 @@ const SignUp = () => {
           <p className="px-6 text-sm text-center dark:text-gray-600">
             Don't have an account yet?
             <Link
-              q
               to="/sign-in"
               rel="noopener noreferrer"
               href="#"
