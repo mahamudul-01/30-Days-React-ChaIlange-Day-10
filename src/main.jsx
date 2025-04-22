@@ -8,6 +8,7 @@ import Main from "./components/Main/Main";
 import Home from "./components/Home/Home";
 import SignIn from "./components/SignIn/SignIn";
 import SignUp from "./components/SignUp/SignUp";
+import AuthProvider from "./contextApi/AuthProvider";
 
 const router = createBrowserRouter([
   {
@@ -20,11 +21,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/sign-in",
-        element: <SignIn></SignIn>
+        element: <SignIn></SignIn>,
       },
       {
         path: "/sign-up",
-        element: <SignUp></SignUp>
+        element: <SignUp></SignUp>,
       },
     ],
   },
@@ -32,6 +33,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
   </StrictMode>
 );
