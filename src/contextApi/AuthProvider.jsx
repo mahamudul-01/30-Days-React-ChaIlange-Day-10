@@ -7,7 +7,7 @@
  * `AuthContext` to access the `createUser` function for creating a user with email and password using
  * Firebase authentication.
  */
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
 import { createContext, useEffect, useState } from "react";
 import auth from "../firebase/firebase.init";
 
@@ -36,9 +36,15 @@ const AuthProvider = ({children}) => {
         })
         return ()=>unSubscribe()
     },[])
+
+    const logOut=()=>{
+        return signOut(auth)
+    }
     const authInfo={
         createUser,
-        signInUser
+        signInUser,
+        user,
+        logOut
     }
 
      
