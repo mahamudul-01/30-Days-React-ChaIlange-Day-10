@@ -19,32 +19,42 @@ import auth from "../firebase/firebase.init";
 const AuthProvider = ({children}) => {
 
     const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const createUser=(email,password)=>{
+        setLoading(true)
         return createUserWithEmailAndPassword(auth, email, password)
         
     }
+
     const signInUser=(email,password)=>{
+        setLoading(true)
         return signInWithEmailAndPassword(auth, email, password)
+    }
+
+    const logOut=()=>{
+        setLoading
+        return signOut(auth)
     }
 
 
     useEffect(()=>{
         const unSubscribe=onAuthStateChanged(auth,currentUser=>{
             setUser(currentUser)
+            setLoading(false)
             console.log('current user', currentUser);
         })
+        
         return ()=>unSubscribe()
     },[])
 
-    const logOut=()=>{
-        return signOut(auth)
-    }
+    
     const authInfo={
         createUser,
         signInUser,
         user,
-        logOut
+        logOut,
+        loading
     }
 
      

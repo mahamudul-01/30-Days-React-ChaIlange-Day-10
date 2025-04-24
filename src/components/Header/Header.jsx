@@ -63,6 +63,9 @@ const Header = () => {
           <li>
             <NavLink to="/sign-up">Sign Up</NavLink>
           </li>
+          <li>
+            <NavLink to="/orders">Orders</NavLink>
+          </li>
         </ul>
       </div>
       <div className="navbar-end">
