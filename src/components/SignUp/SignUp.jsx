@@ -1,13 +1,20 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
 import { FaGoogle } from "react-icons/fa6";
 import { Link } from "react-router-dom";
-import auth from "../../firebase/firebase.init";
+// import auth from "../../firebase/firebase.init";
 import { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { VscEye, VscEyeClosed } from "react-icons/vsc";
+import { AuthContext } from "../../contextApi/AuthProvider";
+import { useContext } from "react";
 
 const SignUp = () => {
+
+  const {createUser}=useContext(AuthContext);
+
+
+
 
   const [emailUserError, setEmailUserError] = useState('');
   const [success, setSuccess] = useState('');
@@ -20,72 +27,88 @@ const SignUp = () => {
     const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    const termsAccepted = e.target.terms.checked;
+    // const termsAccepted = e.target.terms.checked;
 
-    if (!termsAccepted) {
-      setEmailUserError('You must accept the Terms and Conditions');
-      toast.error('You must accept the Terms and Conditions', {
-        position: "top-center",
-      });
-      return;
-    }
+    createUser(email, password)
+      .then(result=>{
+        const user=result.user
+        console.log(user);
+      })
+      .catch(error=>{
+        const errorMessage = error.message;
+        console.log(errorMessage);
 
-    if(password.length < 6) {
-      setEmailUserError('Password must be at least 6 characters long'); 
-      toast.error('Password must be at least 6 characters long', {
-        position: "top-center",
-      });
-      return; 
-    }
-    else if(!/(?=.*[A-Z])/.test(password)) {
-      setEmailUserError('Password must contain at least one uppercase letter'); 
-      toast.error('Password must contain at least one uppercase letter', {
-        position: "top-center",
-      });
-      return; 
-    }
+      })
+      
+
+    // if (!termsAccepted) {
+    //   // Show error if terms are not accepted
+    //   setEmailUserError('You must accept the Terms and Conditions');
+    //   toast.error('You must accept the Terms and Conditions', {
+    //     position: "top-center",
+    //   });
+    //   return;
+    // }
+
+    // // Password validation: minimum length
+    // if(password.length < 6) {
+    //   setEmailUserError('Password must be at least 6 characters long'); 
+    //   toast.error('Password must be at least 6 characters long', {
+    //     position: "top-center",
+    //   });
+    //   return; 
+    // }
+    // // Password validation: at least one uppercase letter
+    // else if(!/(?=.*[A-Z])/.test(password)) {
+    //   setEmailUserError('Password must contain at least one uppercase letter'); 
+    //   toast.error('Password must contain at least one uppercase letter', {
+    //     position: "top-center",
+    //   });
+    //   return; 
+    // }
     
-
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        updateProfile(user, {
-          displayName: name,
-        })
-          .then(() => {
-            // Profile updated successfully
-            console.log("Profile updated successfully");
-          })
-          .catch((error) => { 
-            // An error occurred while updating the profile
-            console.error("Error updating profile:", error);
-          });
-        sendEmailVerification(user)
-          .then(() => {
-            // Email verification sent. Prompt user to check their email.
-            toast.info('Verification email sent. Please check your inbox.', {
-              position: "top-center",
-            });
-          }
-        )
+    // // Create user with email and password using Firebase
+    // createUserWithEmailAndPassword(auth, email, password)
+    //   .then((userCredential) => {
+    //     const user = userCredential.user;
+    //     // Update user profile with display name
+    //     updateProfile(user, {
+    //       displayName: name,
+    //     })
+    //       .then(() => {
+    //         // Profile updated successfully
+    //         console.log("Profile updated successfully");
+    //       })
+    //       .catch((error) => { 
+    //         // An error occurred while updating the profile
+    //         console.error("Error updating profile:", error);
+    //       });
+    //     sendEmailVerification(user)
+    //       .then(() => {
+    //         // Email verification sent. Prompt user to check their email.
+    //         toast.info('Verification email sent. Please check your inbox.', {
+    //           position: "top-center",
+    //         });
+    //       }
+    //     )
 
 
         
-        setSuccess('User created successfully');
-        toast.success('User created successfully', {
-          position: "top-center",
-          autoClose: 5000,
-        });
-        console.log(user);
-      })
-      .catch((error) => {
-        const errorMessage = error.message;
-        setEmailUserError(errorMessage);
-        toast.error(errorMessage, {
-          position: "top-center",
-        });
-      });
-    console.log(name, email, password);
+    //     setSuccess('User created successfully');
+    //     toast.success('User created successfully', {
+    //       position: "top-center",
+    //       autoClose: 5000,
+    //     });
+    //     console.log(user);
+    //   })
+    //   .catch((error) => {
+    //     const errorMessage = error.message;
+    //     setEmailUserError(errorMessage);
+    //     toast.error(errorMessage, {
+    //       position: "top-center",
+    //     });
+    //   });
+    // console.log(name, email, password);
   };
 
   return (
@@ -185,7 +208,7 @@ const SignUp = () => {
               className="w-full mt-6 px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50"
             >
               Sign Up with google
-              <FaGoogle classNameName="inline ml-4" />
+              <FaGoogle className="inline ml-4" />
             </button>
           </div>
           <p className="px-6 text-sm text-center dark:text-gray-600">

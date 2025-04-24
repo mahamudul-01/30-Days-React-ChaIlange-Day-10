@@ -1,12 +1,14 @@
+/* The above code is a React component for a sign-in page. Here is a summary of what the code is doing: */
 import { signInWithEmailAndPassword, GithubAuthProvider, GoogleAuthProvider, signInWithPopup, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { Link, useNavigate } from "react-router-dom";
 import auth from "../../firebase/firebase.init";
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { VscEye, VscEyeClosed } from "react-icons/vsc";
+import { AuthContext } from "../../contextApi/AuthProvider";
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -14,6 +16,8 @@ const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const emailRef = useRef('');
+
+  const {signInUser}=useContext(AuthContext);
 
   const googleProvider = new GoogleAuthProvider();
   const githubProvider = new GithubAuthProvider();
@@ -23,28 +27,39 @@ const SignIn = () => {
     const email = e.target.email.value;
     const password = e.target.password.value;
 
-    signInWithEmailAndPassword(auth, email, password)
+    signInUser(email, password)
       .then((result) => {
-        setUser(result.user);
-        if (result.user.emailVerified) {
-          toast.success("Sign in successful!", { position: "top-center" });
-          navigate('/');
-          console.log("Sign in successful!", result.user);
-        } else {
-          toast.error("Please verify your email address", { position: "top-center" });
-          signOut(auth)
-            .then(() => {
-              toast.success("Sign out successful!", { position: "top-center" });
-            })
-            .catch((error) => {
-              toast.error(error.message, { position: "top-center" });
-            });
-        }
-      })
+        const user = result.user;
+        console.log(user);
+      }
+    )
       .catch((error) => {
-        toast.error(error.message, { position: "top-center" });
-        setUser(null);
-      });
+        const errorMessage = error.message;
+        console.log(errorMessage);
+      })
+
+    // signInWithEmailAndPassword(auth, email, password)
+    //   .then((result) => {
+    //     setUser(result.user);
+    //     if (result.user.emailVerified) {
+    //       toast.success("Sign in successful!", { position: "top-center" });
+    //       navigate('/');
+    //       console.log("Sign in successful!", result.user);
+    //     } else {
+    //       toast.error("Please verify your email address", { position: "top-center" });
+    //       signOut(auth)
+    //         .then(() => {
+    //           toast.success("Sign out successful!", { position: "top-center" });
+    //         })
+    //         .catch((error) => {
+    //           toast.error(error.message, { position: "top-center" });
+    //         });
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     toast.error(error.message, { position: "top-center" });
+    //     setUser(null);
+    //   });
   };
 
   const handleGoogleSignIn = () => {

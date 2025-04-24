@@ -25,46 +25,34 @@ const Header = () => {
             tabIndex={0}
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
-            <NavLink to="/">
-              <li>
-                <a>Home</a>
-              </li>
-            </NavLink>
-            <NavLink to="/sign-in">
-              <li>
-                <a>Sign In</a>
-              </li>
-            </NavLink>
-            <NavLink to="/sign-up">
-              <li>
-                <a>Sign Up</a>
-              </li>
-            </NavLink>
+            <li>
+              <NavLink to="/">Home</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sign-in">Sign In</NavLink>
+            </li>
+            <li>
+              <NavLink to="/sign-up">Sign Up</NavLink>
+            </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl text-yellow-500">Firebase</a>
+        <span className="btn btn-ghost text-xl text-yellow-500">Firebase</span>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
-        <NavLink to="/">
-              <li>
-                <a>Home</a>
-              </li>
-            </NavLink>
-            <NavLink to="/sign-in">
-              <li>
-                <a>Sign In</a>
-              </li>
-            </NavLink>
-            <NavLink to="/sign-up">
-              <li>
-                <a>Sign Up</a>
-              </li>
-            </NavLink>
+          <li>
+            <NavLink to="/">Home</NavLink>
+          </li>
+          <li>
+            <NavLink to="/sign-in">Sign In</NavLink>
+          </li>
+          <li>
+            <NavLink to="/sign-up">Sign Up</NavLink>
+          </li>
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Button</a>
+        <span className="btn">Button</span>
       </div>
     </div>
   );
